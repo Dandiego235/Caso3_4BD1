@@ -8,7 +8,7 @@ package com.ev.esencialgui.gui;
  *
  * @author Daniel Granados <dagranados@estudiantec.cr>
  */
-public class registrarVenta extends javax.swing.JFrame {
+public class RegistrarVenta extends javax.swing.JFrame {
     String queryProductos = "SELECT productoId, nombreId FROM productos"; 
     String queryContratos = "SELECT prodContratoId, precio, objectTypeId, areaEfectoId FROM contratosProduccion INNER JOIN preciosProductosContrato "
             + "INNER JOIN preciosProductosContrato ON contratosproduccion.prodContratoId = preciosProductosContrato.prodContratoId"
@@ -23,7 +23,7 @@ public class registrarVenta extends javax.swing.JFrame {
     /**
      * Creates new form registrarVenta
      */
-    public registrarVenta() {
+    public RegistrarVenta() {
         initComponents();
     }
 
@@ -40,7 +40,6 @@ public class registrarVenta extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         comboProductos = new javax.swing.JComboBox<>();
-        comboContratos = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         cantidadText = new javax.swing.JTextField();
@@ -58,6 +57,9 @@ public class registrarVenta extends javax.swing.JFrame {
         borrarButton = new javax.swing.JButton();
         jLabel9 = new javax.swing.JLabel();
         comboLotes = new javax.swing.JComboBox<>();
+        jLabel10 = new javax.swing.JLabel();
+        cantidadLoteText = new javax.swing.JLabel();
+        contratoText = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -69,7 +71,7 @@ public class registrarVenta extends javax.swing.JFrame {
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, -1, -1));
 
         jLabel3.setText("Contrato");
-        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 100, -1, -1));
+        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 180, -1, -1));
 
         comboProductos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -78,20 +80,18 @@ public class registrarVenta extends javax.swing.JFrame {
         });
         getContentPane().add(comboProductos, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 40, 230, -1));
 
-        getContentPane().add(comboContratos, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 100, 230, -1));
-
         jLabel4.setText("Actores");
-        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, -1, -1));
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 220, -1, -1));
 
         jLabel5.setText("Cantidad");
-        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 270, -1, -1));
-        getContentPane().add(cantidadText, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 270, 120, -1));
+        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 130, -1, -1));
+        getContentPane().add(cantidadText, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 130, 120, -1));
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
 
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 150, -1, 70));
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 220, -1, 70));
 
         registrarButton.setText("Registrar Venta");
         getContentPane().add(registrarButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 500, -1, -1));
@@ -100,12 +100,14 @@ public class registrarVenta extends javax.swing.JFrame {
         getContentPane().add(cancelarButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 500, -1, -1));
 
         jLabel6.setText("Monto Total");
-        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 460, -1, -1));
+        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 460, -1, -1));
+
+        montoLabel.setText("0");
         getContentPane().add(montoLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 450, 120, 30));
         getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 300, -1, -1));
 
         jLabel8.setText("Desglose");
-        getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 340, -1, -1));
+        getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 340, -1, -1));
 
         jScrollPane2.setViewportView(listaProductos);
 
@@ -123,9 +125,18 @@ public class registrarVenta extends javax.swing.JFrame {
         getContentPane().add(borrarButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 370, -1, -1));
 
         jLabel9.setText("Lote");
-        getContentPane().add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 240, -1, -1));
+        getContentPane().add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, -1, -1));
 
-        getContentPane().add(comboLotes, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 240, 230, -1));
+        getContentPane().add(comboLotes, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 90, 230, -1));
+
+        jLabel10.setText("Cantidad disponible: ");
+        getContentPane().add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 90, -1, -1));
+
+        cantidadLoteText.setText("0");
+        getContentPane().add(cantidadLoteText, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 90, 60, 20));
+
+        contratoText.setText("label");
+        getContentPane().add(contratoText, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 170, 150, 30));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -155,20 +166,23 @@ public class registrarVenta extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(registrarVenta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RegistrarVenta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(registrarVenta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RegistrarVenta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(registrarVenta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RegistrarVenta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(registrarVenta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RegistrarVenta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new registrarVenta().setVisible(true);
+                new RegistrarVenta().setVisible(true);
             }
         });
     }
@@ -177,11 +191,13 @@ public class registrarVenta extends javax.swing.JFrame {
     private javax.swing.JButton addButton;
     private javax.swing.JButton borrarButton;
     private javax.swing.JButton cancelarButton;
+    private javax.swing.JLabel cantidadLoteText;
     private javax.swing.JTextField cantidadText;
-    private javax.swing.JComboBox<String> comboContratos;
     private javax.swing.JComboBox<String> comboLotes;
     private javax.swing.JComboBox<String> comboProductos;
+    private javax.swing.JLabel contratoText;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
