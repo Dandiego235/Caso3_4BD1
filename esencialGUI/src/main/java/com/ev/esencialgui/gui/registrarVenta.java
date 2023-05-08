@@ -20,6 +20,7 @@ public class RegistrarVenta extends javax.swing.JFrame {
     String queryCanales = "SELECT canalId, nombre FROM canales";
     String query 
    int productoId;
+   String productoNombre;
    int prodContratoId;
    int loteId;
     /**
@@ -136,8 +137,20 @@ public class RegistrarVenta extends javax.swing.JFrame {
 
     private void comboProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboProductosActionPerformed
         // TODO add your handling code here:
+        productoNombre = (String) comboProductos.getSelectedItem();
     }//GEN-LAST:event_comboProductosActionPerformed
 
+    private void fillComboProductos(){
+          comboProductos.removeAllItems();
+          if (!atleta.getMarcas().isEmpty()){
+                for (Marca marcaIter : atleta.getMarcas()){
+                      if (!pruebas.contains(marcaIter.getPrueba().getNombre())){
+                        ComboPruebas.addItem(marcaIter.getPrueba().getNombre());
+                        pruebas.add(marcaIter.getPrueba().getNombre());
+                      }
+                }
+          }
+    }
     /**
      * @param args the command line arguments
      */
