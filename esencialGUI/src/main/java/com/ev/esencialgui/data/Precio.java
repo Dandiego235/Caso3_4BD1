@@ -63,4 +63,8 @@ public class Precio implements Comparable<Precio>{
             this.precioProd = precioProd;
       }
       
+      public void modifyCantidad(int pCantidad) {
+            cantidadTotal += pCantidad; 
+      }
+      
 }
