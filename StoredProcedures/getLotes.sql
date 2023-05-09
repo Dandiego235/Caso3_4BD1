@@ -16,15 +16,16 @@ BEGIN
 		SELECT lpl.loteId, COALESCE(sum(cantidadProductos), 0) cantidadVendida FROM lotesProduccionLogs lpl LEFT JOIN itemsProductos on lpl.loteId = itemsProductos.loteID
 		GROUP BY lpl.loteId
 	)
-	SELECT lpl.loteId, lpl.fecha, lpl.productoId, lpl.prodContratoId, lpl.plantaId, lpl.cantidad - productosVendidos.cantidadVendida cantidad, 
-	lpl.costoProduccion / costoMonedas.conversion AS costoProduccion, lpl.monedaId costoMoneda,
-	preciosProductosContrato.precio / precioMonedas.conversion  AS precio, preciosProductosContrato.monedaId precioMoneda
+	SELECT lpl.loteId, lpl.fecha, nombres.nombreBase productoNombre, lpl.prodContratoId, lpl.plantaId, lpl.cantidad - productosVendidos.cantidadVendida cantidad, 
+	lpl.costoProduccion / costoMonedas.conversion AS costoProduccion,
+	preciosProductosContrato.precio / precioMonedas.conversion  AS precio
 	FROM lotesProduccionLogs lpl
 	INNER JOIN productosVendidos ON productosVendidos.loteId = lpl.loteId
 	INNER JOIN productos ON lpl.productoId = productos.productoId
 	INNER JOIN preciosProductosContrato ON lpl.prodContratoId = preciosProductosContrato.prodContratoId AND lpl.productoId = preciosProductosContrato.productoId
 	INNER JOIN tiposDeCambio costoMonedas ON lpl.monedaId = costoMonedas.monedaCambioId
 	INNER JOIN tiposDeCambio precioMonedas ON preciosProductosContrato.monedaId = precioMonedas.monedaCambioId
+	INNER JOIN nombres ON nombres.nombreId = productos.nombreId
 	ORDER BY precio, lpl.fecha;
 
 END

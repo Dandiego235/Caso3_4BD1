@@ -8,6 +8,8 @@ import com.ev.esencialgui.data.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.DefaultListModel;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  *
@@ -28,6 +30,32 @@ public class RegistrarVenta extends javax.swing.JFrame {
    private int cantidad;
    private HashMap<String, objetoLista> objetosListaMap; 
    private float montoTotal;
+   
+   private void readProductos(){
+       EsencialVerdeAccess access = EsencialVerdeAccess.getInstance();
+       ResultSet productos = access.getProductos();
+       try {
+            while (productos.next()){
+                Producto producto = new Producto(Integer.parseInt(productos.getString("productoId")), productos.getString("nombreBase"));
+                productosMap.put(producto.getNombre(), producto);
+            }
+       } catch (Exception ex){
+           ex.printStackTrace();
+       }
+   }
+   
+   private void readCanales(){
+       EsencialVerdeAccess access = EsencialVerdeAccess.getInstance();
+       ResultSet canales = access.getCanales();
+       try {
+            while (canales.next()){
+                Canal canal = new Canal(Integer.parseInt(productos.getString("productoId")), productos.getString("nombreBase"));
+                productosMap.put(producto.getNombre(), producto);
+            }
+       } catch (Exception ex){
+           ex.printStackTrace();
+       }
+   }
     /**
      * Creates new form registrarVenta
      */

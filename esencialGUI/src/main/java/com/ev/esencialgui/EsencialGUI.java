@@ -14,6 +14,8 @@ public class EsencialGUI {
 
     public static void main(String[] args) {
         EsencialVerdeAccess access = EsencialVerdeAccess.getInstance();
-        access.getQuery();
+        access.getProductos();
+        access.getCanales();
+        access.getLotes();
     }
 }

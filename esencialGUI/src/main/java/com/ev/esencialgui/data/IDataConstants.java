@@ -9,5 +9,5 @@ package com.ev.esencialgui.data;
  * @author Daniel Granados <dagranados@estudiantec.cr>
  */
 public interface IDataConstants {
-    public static String CONN_STRING = "jdbc:sqlserver://localhost:1433;encrypt=true;databaseName=esencialverde;user=sa;password=Twinsociety235;trustServerCertificate=true"; 
+    public static String CONN_STRING = "jdbc:sqlserver://localhost:1433;encrypt=true;databaseName=ev34;user=sa;password=Twinsociety235;trustServerCertificate=true"; 
 }
