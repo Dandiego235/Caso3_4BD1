@@ -205,7 +205,9 @@ public class RegistrarVenta extends javax.swing.JFrame {
         objetosListaMap.put(stringLista, new objetoLista(productoSelected, cantidad, (cantidad * precioSelected.getPrecioProd())));
         listaProductosModel.addElement(stringLista);     
         montoTotal += (cantidad * precioSelected.getPrecioProd());
-        montoLabel.setText(Float.toString(montoTotal));      
+        montoLabel.setText(Float.toString(montoTotal));   
+        precioSelected.modifyCantidad(-(cantidad));
+        cantidadLoteText.setText(Integer.toString(precioSelected.getCantidadTotal()));
     }//GEN-LAST:event_addButtonActionPerformed
 
     private void comboProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboProductosActionPerformed
