@@ -48,4 +48,18 @@ public class Precio implements Comparable<Precio>{
             return -1;
         }
     }
+
+      public float getPrecioProd() {
+            return precioProd;
+      }
+
+      public void setCantidadTotal(int cantidadTotal) {
+            this.cantidadTotal = cantidadTotal;
+      }
+
+      public void setPrecioProd(float precioProd) {
+            this.precioProd = precioProd;
+      }
+      
+      
 }

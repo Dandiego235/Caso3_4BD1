@@ -4,8 +4,10 @@
  */
 package com.ev.esencialgui.gui;
 
-import com.ev.esencialgui.data.Producto;
+import com.ev.esencialgui.data.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import javax.swing.DefaultListModel;
 
 /**
  *
@@ -16,14 +18,44 @@ public class RegistrarVenta extends javax.swing.JFrame {
    private String productoNombre;
    private int prodContratoId;
    private int loteId;
-   private ArrayList<Producto> productosList;
    private Producto productoSelected;
+   private HashMap<String,Producto> productosMap;
+   private HashMap<String, Canal> canalesMap;
+   private HashMap<String, Precio> preciosMap;
+   private Canal canalSelected;
+   private Precio precioSelected;
+   private DefaultListModel listaProductosModel;
     /**
      * Creates new form registrarVenta
      */
     public RegistrarVenta() {
         initComponents();
-        productosList = new ArrayList<>();
+        productosMap = new HashMap<>();
+        canalesMap = new HashMap<>();
+        cantidadText.setInputVerifier(new CantidadInputVerifier());
+        listaProductosModel = new DefaultListModel();
+        listaProductos.setModel(listaProductosModel);
+        listaProductosModel.removeAllElements();
+          
+           
+          if (!atleta.getMarcas().isEmpty()){
+                for (Marca marcaIter : atleta.getMarcas()){
+                      if (marcaIter.getPrueba().getNombre() == ComboPruebas.getSelectedItem()){
+                       String resultado = new String();
+
+                          if (!marcaIter.getPrueba().getDisciplina().getTipo()){ // si se mide con tiempo
+                                marcaIter.getPrueba().ordenarMarcasTiempo(marcaIter.getCompetencia());
+                                resultado = Marca.convertToString(marcaIter.getResultado());
+                           } else {
+                                marcaIter.getPrueba().ordenarMarcasDistancia(marcaIter.getCompetencia());
+                                resultado = Double.toString(marcaIter.getResultado());
+                           }                    
+                           MarcaListModel.addElement(resultado);
+                           LugarListModel.addElement(marcaIter.getLugar());
+                           CompetenciaListModel.addElement(marcaIter.getCompetencia().getNombre());
+                      }                      
+                }
+          }
     }
 
     /**
@@ -60,9 +92,9 @@ public class RegistrarVenta extends javax.swing.JFrame {
             setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
             getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("Registrar Venta");
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 10, -1, -1));
+            jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+            jLabel1.setText("Registrar Venta");
+            getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 10, -1, -1));
 
             jLabel2.setText("Producto");
             getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, -1, -1));
@@ -76,6 +108,12 @@ public class RegistrarVenta extends javax.swing.JFrame {
 
             jLabel5.setText("Cantidad");
             getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 190, -1, -1));
+
+            cantidadText.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        cantidadTextActionPerformed(evt);
+                  }
+            });
             getContentPane().add(cantidadText, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 190, 120, -1));
 
             registrarButton.setText("Registrar Venta");
@@ -112,6 +150,11 @@ public class RegistrarVenta extends javax.swing.JFrame {
             jLabel9.setText("Precio");
             getContentPane().add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, -1, -1));
 
+            comboPrecios.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        comboPreciosActionPerformed(evt);
+                  }
+            });
             getContentPane().add(comboPrecios, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 140, 230, -1));
 
             jLabel10.setText("Cantidad disponible: ");
@@ -123,6 +166,11 @@ public class RegistrarVenta extends javax.swing.JFrame {
             jLabel11.setText("Canal");
             getContentPane().add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, 40, -1));
 
+            comboCanales.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        comboCanalesActionPerformed(evt);
+                  }
+            });
             getContentPane().add(comboCanales, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 50, 230, -1));
 
             pack();
@@ -130,17 +178,46 @@ public class RegistrarVenta extends javax.swing.JFrame {
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         // TODO add your handling code here:
+        
+        
+        
     }//GEN-LAST:event_addButtonActionPerformed
 
     private void comboProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboProductosActionPerformed
         // TODO add your handling code here:
-        productoNombre = (String) comboProductos.getSelectedItem();
+        productoSelected = productosMap.get((String) comboProductos.getSelectedItem());
+        fillComboPrecios();
     }//GEN-LAST:event_comboProductosActionPerformed
+
+      private void comboCanalesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboCanalesActionPerformed
+            // TODO add your handling code here:
+            canalSelected = canalesMap.get((String) comboCanales.getSelectedItem());
+      }//GEN-LAST:event_comboCanalesActionPerformed
+
+      private void comboPreciosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboPreciosActionPerformed
+            // TODO add your handling code here:
+            if (productoSelected == null) {
+                  return;
+            }
+            precioSelected = preciosMap.get((String) comboPrecios.getSelectedItem());
+            cantidadLoteText.setText(Integer.toString(precioSelected.getCantidadTotal()));
+      }//GEN-LAST:event_comboPreciosActionPerformed
+
+      private void cantidadTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cantidadTextActionPerformed
+            // TODO add your handling code here:
+      }//GEN-LAST:event_cantidadTextActionPerformed
 
     private void fillComboProductos(){
           comboProductos.removeAllItems();
           productosMap.forEach((key, value) -> {
-            comboProductos.addItem(value);
+                comboProductos.addItem(key);
+        });
+    }  
+    
+    private void fillComboCanales(){
+          comboCanales.removeAllItems();
+          canalesMap.forEach((key, value) -> {
+                comboCanales.addItem(key);
         });
     }
     
@@ -149,14 +226,10 @@ public class RegistrarVenta extends javax.swing.JFrame {
                 return;
           }
           comboPrecios.removeAllItems();
-          
-          if (!atleta.getMarcas().isEmpty()){
-                for (Marca marcaIter : atleta.getMarcas()){
-                      if (!pruebas.contains(marcaIter.getPrueba().getNombre())){
-                        ComboPruebas.addItem(marcaIter.getPrueba().getNombre());
-                        pruebas.add(marcaIter.getPrueba().getNombre());
-                      }
-                }
+          preciosMap = new HashMap<>();
+          for (Precio precioIter : productoSelected.getPrecios()) {
+                comboPrecios.addItem(Float.toString(precioIter.getPrecioProd())+ " dólares");
+                preciosMap.put(Float.toString(precioIter.getPrecioProd()), precioIter);
           }
     }
     /**
@@ -184,6 +257,18 @@ public class RegistrarVenta extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(RegistrarVenta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
