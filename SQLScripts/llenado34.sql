@@ -92,12 +92,12 @@ INSERT INTO [dbo].[preciosProductosContrato]
      VALUES
            (@contador
            ,@productosContador
-           ,FLOOR(1 + RAND() * 150)
+           ,10 + 5 * FLOOR(RAND() * 12)
            ,FLOOR(1 + RAND() * (SELECT cantidad FROM #objectTypeQuantities WHERE objectTypeId = @objectTypeId))
            ,@objectTypeId
            ,DATEADD(minute, FLOOR(1 + RAND()*518400), '2022-01-01 00:00:00')
            ,DATEADD(minute, FLOOR(1 + RAND()*518400), '2022-01-01 00:00:00')
-           ,(SELECT TOP 1 monedaId FROM monedas ORDER BY NEWID())
+           ,1
            ,1
            ,GETDATE()
 		   ,@computer
@@ -400,47 +400,6 @@ SET @contador = @contador + 1
 END
 
 SET @contador = 1
-SET @max = 500
-WHILE @contador <= @max
-BEGIN
-
-SET @objectTypeId = FLOOR(1 + RAND()*@geographicObjects)
-
-INSERT INTO [dbo].[preciosProductosContrato]
-           ([prodContratoId]
-           ,[productoId]
-           ,[precio]
-           ,[areaEfectoId]
-           ,[objectTypeId]
-           ,[fechaInicio]
-           ,[fechaFin]
-           ,[monedaId]
-           ,[enabled]
-           ,[createdAt]
-           ,[computer]
-           ,[username]
-           ,[checksum])
-     VALUES
-           ((SELECT TOP 1 prodContratoId from contratosProduccion ORDER BY NEWID())
-           ,(SELECT TOP 1 productoId from productos ORDER BY NEWID())
-           ,FLOOR(1 + RAND() * 150)
-           ,FLOOR(1 + RAND() * (SELECT cantidad FROM #objectTypeQuantities WHERE objectTypeId = @objectTypeId))
-           ,@objectTypeId
-           ,DATEADD(minute, FLOOR(1 + RAND()*518400), '2022-01-01 00:00:00')
-           ,DATEADD(minute, FLOOR(1 + RAND()*518400), '2022-01-01 00:00:00')
-           ,(SELECT TOP 1 monedaId FROM monedas ORDER BY NEWID())
-           ,1
-           ,GETDATE()
-		   ,@computer
-		   ,@username
-		   ,@checksum)
-
-SET @contador = @contador + 1
-
-END
-
-
-SET @contador = 1
 SET @max = 10000
 WHILE @contador <= @max
 BEGIN
@@ -544,7 +503,15 @@ END
 
 GO
 
--- SELECT * FROM lotesProduccionLogs
+UPDATE lotesProduccionLogs
+SET cantidad = cantidad + productosVendidos.cantidadVendida
+FROM (SELECT lpl.loteId, COALESCE(sum(cantidadProductos), 0) cantidadVendida FROM lotesProduccionLogs lpl
+LEFT JOIN itemsProductos on lpl.loteId = itemsProductos.loteID	GROUP BY lpl.loteId) productosVendidos
+INNER JOIN lotesProduccionLogs ON productosVendidos.loteId = lotesProduccionLogs.loteId
+
+SELECT lpl.loteId, COALESCE(sum(cantidadProductos), 0) cantidadVendida FROM lotesProduccionLogs lpl
+LEFT JOIN itemsProductos on lpl.loteId = itemsProductos.loteID	GROUP BY lpl.loteId ORDER BY lpl.loteId
+-- SELECT * FROM lotesProduccionLogs WHERE cantidad = 0
 -- SELECT * FROM facturas
 
 -- SELECT * FROM itemsFactura
