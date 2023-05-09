@@ -158,3 +158,13 @@ END
 SET @contador = @contador + 1
 
 END
+
+GO
+
+DELETE FROM preciosProductosContrato WHERE precioProductoId > 1
+
+SELECT * FROM preciosProductosContrato ORDER BY precioProductoId
+
+UPDATE itemsProductos
+SET precioProductoId = 1
+WHERE itemProdId >= 1
