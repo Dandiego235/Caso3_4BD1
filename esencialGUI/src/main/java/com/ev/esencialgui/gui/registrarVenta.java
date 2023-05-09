@@ -25,6 +25,9 @@ public class RegistrarVenta extends javax.swing.JFrame {
    private Canal canalSelected;
    private Precio precioSelected;
    private DefaultListModel listaProductosModel;
+   private int cantidad;
+   private HashMap<String, objetoLista> objetosListaMap; 
+   private float montoTotal;
     /**
      * Creates new form registrarVenta
      */
@@ -36,26 +39,8 @@ public class RegistrarVenta extends javax.swing.JFrame {
         listaProductosModel = new DefaultListModel();
         listaProductos.setModel(listaProductosModel);
         listaProductosModel.removeAllElements();
-          
-           
-          if (!atleta.getMarcas().isEmpty()){
-                for (Marca marcaIter : atleta.getMarcas()){
-                      if (marcaIter.getPrueba().getNombre() == ComboPruebas.getSelectedItem()){
-                       String resultado = new String();
-
-                          if (!marcaIter.getPrueba().getDisciplina().getTipo()){ // si se mide con tiempo
-                                marcaIter.getPrueba().ordenarMarcasTiempo(marcaIter.getCompetencia());
-                                resultado = Marca.convertToString(marcaIter.getResultado());
-                           } else {
-                                marcaIter.getPrueba().ordenarMarcasDistancia(marcaIter.getCompetencia());
-                                resultado = Double.toString(marcaIter.getResultado());
-                           }                    
-                           MarcaListModel.addElement(resultado);
-                           LugarListModel.addElement(marcaIter.getLugar());
-                           CompetenciaListModel.addElement(marcaIter.getCompetencia().getNombre());
-                      }                      
-                }
-          }
+        objetosListaMap = new HashMap<>();
+        montoTotal = 0;
     }
 
     /**
@@ -178,9 +163,21 @@ public class RegistrarVenta extends javax.swing.JFrame {
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         // TODO add your handling code here:
-        
-        
-        
+        cantidad = -1;
+        try {
+              cantidad = Integer.valueOf(cantidadLoteText.getText());
+        }
+        catch (Exception e) {
+              return;
+        }
+        if (canalSelected == null || precioSelected == null || productoSelected == null || cantidad == -1) {
+              return;
+        }
+        String stringLista = productoSelected.getNombre() + " " + cantidad + " " + (cantidad * precioSelected.getPrecioProd());
+        objetosListaMap.put(stringLista, new objetoLista(productoSelected, cantidad, (cantidad * precioSelected.getPrecioProd())));
+        listaProductosModel.addElement(stringLista);     
+        montoTotal += (cantidad * precioSelected.getPrecioProd());
+        montoLabel.setText(Float.toString(montoTotal));      
     }//GEN-LAST:event_addButtonActionPerformed
 
     private void comboProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboProductosActionPerformed

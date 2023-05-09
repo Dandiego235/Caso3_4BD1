@@ -14,11 +14,13 @@ public class Precio implements Comparable<Precio>{
       private HashMap<Integer, Integer> cantidadPorLotes;
       private int cantidadTotal;
       private float precioProd;
+      private Producto productoPrecio;
       
-      public Precio(float pPrecioProd) {
+      public Precio(float pPrecioProd, Producto pProducto) {
             cantidadPorLotes = new HashMap<>();
             cantidadTotal = 0;
             precioProd = pPrecioProd;
+            productoPrecio = pProducto;
       }
 
       public HashMap<Integer, Integer> getCantidadPorLotes() {
@@ -60,6 +62,5 @@ public class Precio implements Comparable<Precio>{
       public void setPrecioProd(float precioProd) {
             this.precioProd = precioProd;
       }
-      
       
 }

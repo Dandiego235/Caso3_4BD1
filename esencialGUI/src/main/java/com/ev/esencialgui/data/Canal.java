@@ -9,5 +9,8 @@ package com.ev.esencialgui.data;
  * @author dandi
  */
 public class Canal {
-      
+      private String nombre;
+      public Canal(String pNombre) {
+            nombre = pNombre;
+      }
 }
