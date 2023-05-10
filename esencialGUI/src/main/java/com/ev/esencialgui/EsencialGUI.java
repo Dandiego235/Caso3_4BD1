@@ -9,13 +9,12 @@ package com.ev.esencialgui;
  * @author Daniel Granados <dagranados@estudiantec.cr>
  */
 import com.ev.esencialgui.data.EsencialVerdeAccess;
+import com.ev.esencialgui.gui.*;
 
 public class EsencialGUI {
 
     public static void main(String[] args) {
-        EsencialVerdeAccess access = EsencialVerdeAccess.getInstance();
-        access.getProductos();
-        access.getCanales();
-        access.getLotes();
+        RegistrarVenta menu = new RegistrarVenta();
+          menu.setVisible(true);        
     }
 }

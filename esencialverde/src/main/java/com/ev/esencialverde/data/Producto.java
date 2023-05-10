@@ -6,6 +6,7 @@ package com.ev.esencialverde.data;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 /**
  *
@@ -14,12 +15,14 @@ import java.util.Collections;
 public class Producto {
       private int id;
       private String nombre;
-      private ArrayList<Precio> precios;
+      private HashMap<Float, Precio> precios;
+      private ArrayList<Float> preciosOrder;
       
       public Producto(int pId, String pNombre){
             id = pId;
-            pNombre = pNombre;
-            precios = new ArrayList<>();
+            nombre = pNombre;
+            precios = new HashMap<>();
+            preciosOrder = new ArrayList<>();
       }
 
       public int getId() {
@@ -30,7 +33,7 @@ public class Producto {
             return nombre;
       }
 
-      public ArrayList<Precio> getPrecios() {
+      public HashMap<Float, Precio> getPrecios() {
             return precios;
       }
 
@@ -42,12 +45,14 @@ public class Producto {
             this.nombre = nombre;
       }
 
-      public void setPrecios(ArrayList<Precio> precios) {
+      public void setPrecios(HashMap<Float, Precio> precios) {
             this.precios = precios;
       }
       
-      public void insertPrecio(Precio pPrecio){
-            precios.add(pPrecio);
-            Collections.sort(precios);
+      
+      public void insertPrecio(Float pPrecio, Lote pLote, int pCantidad){
+            precios.put(pPrecio, new Precio(pPrecio, this, pLote, pCantidad));
+            preciosOrder.add(pPrecio);
+            Collections.sort(preciosOrder);
       }
 }

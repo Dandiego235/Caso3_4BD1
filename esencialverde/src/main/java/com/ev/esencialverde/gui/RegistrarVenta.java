@@ -22,7 +22,7 @@ public class RegistrarVenta extends javax.swing.JFrame {
    private Producto productoSelected;
    private HashMap<String,Producto> productosMap;
    private HashMap<String, Canal> canalesMap;
-   private HashMap<String, Precio> preciosMap;
+   private HashMap<Float, Precio> preciosMap;
    private Canal canalSelected;
    private Precio precioSelected;
    private DefaultListModel listaProductosModel;
@@ -36,51 +36,67 @@ public class RegistrarVenta extends javax.swing.JFrame {
        try {
             while (productos.next()){
                 Producto producto = new Producto(Integer.parseInt(productos.getString("productoId")), productos.getString("nombreBase"));
-                productosMap.put(producto.getNombre(), producto);
+                productosMap.put(producto.getNombre(), producto);                
             }
        } catch (Exception ex){
            ex.printStackTrace();
        }
    }
-   /*
+   
    private void readCanales(){
        EsencialVerdeAccess access = EsencialVerdeAccess.getInstance();
        ResultSet canales = access.getCanales();
        try {
             while (canales.next()){
-                Canal canal = new Canal(Integer.parseInt(productos.getString("productoId")), productos.getString("nombreBase"));
-                productosMap.put(canal.getNombre(), canal);
+                Canal canal = new Canal(Integer.parseInt(canales.getString("canalId")), canales.getString("nombre"));
+               canalesMap.put(canal.getNombre(), canal);
             }
        } catch (Exception ex){
            ex.printStackTrace();
        }
    }
-   */
+   
+   private void readLotes(){
+       EsencialVerdeAccess access = EsencialVerdeAccess.getInstance();
+       ResultSet lotes = access.getLotes();
+       try {
+            while (lotes.next()){
+                Lote lote = new Lote(Integer.parseInt(lotes.getString("loteId")) , lotes.getString("fecha") , lotes.getString("productoNombre"), Integer.parseInt(lotes.getString("prodContratoId")), Integer.parseInt(lotes.getString("plantaId")), (int) Float.parseFloat(lotes.getString("cantidad")), Float.parseFloat(lotes.getString("costoProduccion")),Float.parseFloat(lotes.getString("precio"))); // Crea el lote
+                try { // busca a ver si ya existe ese precio para el producto del lote. Si sí, añade la cantidad del lote al precio.
+                      productosMap.get(lote.getProductoNombre()).getPrecios().get(lote.getPrecio()).insertCantidadLote(lote, lote.getCantidad());
+                } catch (Exception e) { // Si el precio no existe, lo añade y añade el lote y la cantidad.
+                      productosMap.get(lote.getProductoNombre()).insertPrecio(lote.getPrecio(), lote, lote.getCantidad());
+                }
+            }
+       } catch (Exception ex){
+           ex.printStackTrace();
+       }
+   }
+   
    
     private void fillComboProductos(){
           comboProductos.removeAllItems();
           productosMap.forEach((key, value) -> {
-                comboProductos.addItem(key);
+                comboProductos.addItem((String) key);
         });
     }  
     
     private void fillComboCanales(){
           comboCanales.removeAllItems();
           canalesMap.forEach((key, value) -> {
-                comboCanales.addItem(key);
+                comboCanales.addItem((String) key);
         });
     }
     
     private void fillComboPrecios(){
-          if (productoNombre == null){
+          if (productoSelected == null){
                 return;
           }
           comboPrecios.removeAllItems();
-          preciosMap = new HashMap<>();
-          for (Precio precioIter : productoSelected.getPrecios()) {
-                comboPrecios.addItem(Float.toString(precioIter.getPrecioProd())+ " dólares");
-                preciosMap.put(Float.toString(precioIter.getPrecioProd()), precioIter);
-          }
+          preciosMap = productoSelected.getPrecios();
+          preciosMap.forEach((key, value) -> {
+                comboPrecios.addItem(Float.toString(key));
+        });
     }
       /**
        * Creates new form RegistrarVenta
@@ -95,6 +111,15 @@ public class RegistrarVenta extends javax.swing.JFrame {
         listaProductosModel.removeAllElements();
         objetosListaMap = new HashMap<>();
         montoTotal = 0;
+        readProductos();
+        readCanales();
+        readLotes();
+        fillComboProductos();
+        fillComboCanales();
+        comboCanales.setSelectedItem(null);
+        comboProductos.setSelectedItem(null);
+        comboPrecios.setSelectedItem(null);
+        cantidadLoteText.setText("0");
       }
 
       /**
@@ -181,7 +206,7 @@ public class RegistrarVenta extends javax.swing.JFrame {
             getContentPane().add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 180, -1, -1));
 
             cantidadLoteText.setText("0");
-            getContentPane().add(cantidadLoteText, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 180, 70, -1));
+            getContentPane().add(cantidadLoteText, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 180, 90, -1));
 
             comboPrecios.addActionListener(new java.awt.event.ActionListener() {
                   public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -275,7 +300,13 @@ public class RegistrarVenta extends javax.swing.JFrame {
             if (productoSelected == null) {
                   return;
             }
-            precioSelected = preciosMap.get((String) comboPrecios.getSelectedItem());
+            if (comboPrecios.getSelectedItem() == null){
+                  return;
+            }
+            precioSelected = preciosMap.get(Float.parseFloat((String) comboPrecios.getSelectedItem()));
+            if (precioSelected == null) {
+                  return;
+            }
             cantidadLoteText.setText(Integer.toString(precioSelected.getCantidadTotal()));
       }//GEN-LAST:event_comboPreciosActionPerformed
 

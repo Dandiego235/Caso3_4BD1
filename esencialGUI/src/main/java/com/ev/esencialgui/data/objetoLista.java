@@ -17,4 +17,17 @@ public class objetoLista {
             cantidad = pCantidad;
             precioObjeto = pPrecio;
       }
+
+      public Producto getProductoObjeto() {
+            return productoObjeto;
+      }
+
+      public int getCantidad() {
+            return cantidad;
+      }
+
+      public float getPrecioObjeto() {
+            return precioObjeto;
+      }
+      
 }

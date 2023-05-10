@@ -130,9 +130,19 @@ public class RegistrarVenta extends javax.swing.JFrame {
             getContentPane().add(cantidadText, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 190, 120, -1));
 
             registrarButton.setText("Registrar Venta");
+            registrarButton.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        registrarButtonActionPerformed(evt);
+                  }
+            });
             getContentPane().add(registrarButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 440, -1, -1));
 
             cancelarButton.setText("Cancelar");
+            cancelarButton.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        cancelarButtonActionPerformed(evt);
+                  }
+            });
             getContentPane().add(cancelarButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 440, -1, -1));
 
             jLabel6.setText("Monto Total");
@@ -158,6 +168,11 @@ public class RegistrarVenta extends javax.swing.JFrame {
             getContentPane().add(addButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 230, -1, -1));
 
             borrarButton.setText("Borrar");
+            borrarButton.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        borrarButtonActionPerformed(evt);
+                  }
+            });
             getContentPane().add(borrarButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 310, -1, -1));
 
             jLabel9.setText("Precio");
@@ -233,6 +248,18 @@ public class RegistrarVenta extends javax.swing.JFrame {
       private void cantidadTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cantidadTextActionPerformed
             // TODO add your handling code here:
       }//GEN-LAST:event_cantidadTextActionPerformed
+
+      private void borrarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_borrarButtonActionPerformed
+            // TODO add your handling code here:
+      }//GEN-LAST:event_borrarButtonActionPerformed
+
+      private void registrarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registrarButtonActionPerformed
+            // TODO add your handling code here:
+      }//GEN-LAST:event_registrarButtonActionPerformed
+
+      private void cancelarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarButtonActionPerformed
+            // TODO add your handling code here:
+      }//GEN-LAST:event_cancelarButtonActionPerformed
 
     private void fillComboProductos(){
           comboProductos.removeAllItems();

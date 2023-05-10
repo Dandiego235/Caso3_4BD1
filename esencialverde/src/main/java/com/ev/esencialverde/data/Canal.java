@@ -10,7 +10,18 @@ package com.ev.esencialverde.data;
  */
 public class Canal {
       private String nombre;
-      public Canal(String pNombre) {
+      private int id;
+      public Canal(int pId, String pNombre) {
+            id = pId;
             nombre = pNombre;
       }
+
+      public String getNombre() {
+            return nombre;
+      }
+
+      public int getId() {
+            return id;
+      }
+      
 }

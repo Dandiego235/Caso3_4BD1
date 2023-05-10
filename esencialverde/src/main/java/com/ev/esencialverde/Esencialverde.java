@@ -4,12 +4,19 @@
 
 package com.ev.esencialverde;
 
+import com.ev.esencialverde.data.EsencialVerdeAccess;
+import com.ev.esencialverde.gui.RegistrarVenta;
+
 /**
  *
  * @author Daniel Granados <dagranados@estudiantec.cr>
  */
 public class Esencialverde {
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+          EsencialVerdeAccess access = EsencialVerdeAccess.getInstance();
+          access.getProductos();
+          access.getCanales();
+        RegistrarVenta menu = new RegistrarVenta();
+          menu.setVisible(true);  
     }
 }

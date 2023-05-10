@@ -11,27 +11,28 @@ import java.util.HashMap;
  * @author dandi
  */
 public class Precio implements Comparable<Precio>{
-      private HashMap<Integer, Integer> cantidadPorLotes;
+      private HashMap<Lote, Integer> cantidadPorLotes;
       private int cantidadTotal;
       private float precioProd;
       private Producto productoPrecio;
       
-      public Precio(float pPrecioProd, Producto pProducto) {
+      public Precio(float pPrecioProd, Producto pProducto, Lote pLote,int pCantidad) {
             cantidadPorLotes = new HashMap<>();
             cantidadTotal = 0;
             precioProd = pPrecioProd;
             productoPrecio = pProducto;
+            insertCantidadLote(pLote, pCantidad);
       }
 
-      public HashMap<Integer, Integer> getCantidadPorLotes() {
+      public HashMap<Lote, Integer> getCantidadPorLotes() {
             return cantidadPorLotes;
       }
 
-      public void setCantidadPorLotes(HashMap<Integer, Integer> cantidadPorLotes) {
+      public void setCantidadPorLotes(HashMap<Lote, Integer> cantidadPorLotes) {
             this.cantidadPorLotes = cantidadPorLotes;
       }
       
-      public void insertCantidadLote(int pLote, int pCantidad){
+      public void insertCantidadLote(Lote pLote, int pCantidad){
             cantidadPorLotes.put(pLote, pCantidad);
             cantidadTotal += pCantidad;
       }

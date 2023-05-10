@@ -10,7 +10,13 @@ package com.ev.esencialgui.data;
  */
 public class Canal {
       private String nombre;
+      private int id;
       public Canal(String pNombre) {
             nombre = pNombre;
       }
+
+      public String getNombre() {
+            return nombre;
+      }
+      
 }
