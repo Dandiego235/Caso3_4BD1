@@ -5,11 +5,15 @@
 package com.ev.esencialverde.gui;
 
 import com.ev.esencialverde.data.*;
-import java.util.ArrayList;
+import com.microsoft.sqlserver.jdbc.SQLServerDataTable;
+import com.microsoft.sqlserver.jdbc.SQLServerException;
 import java.util.HashMap;
 import javax.swing.DefaultListModel;
 import java.sql.ResultSet;
-import java.sql.SQLException;
+import javax.swing.JOptionPane;
+import java.math.BigDecimal;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
  * @author dandi
@@ -35,7 +39,7 @@ public class RegistrarVenta extends javax.swing.JFrame {
        ResultSet productos = access.getProductos();
        try {
             while (productos.next()){
-                Producto producto = new Producto(Integer.parseInt(productos.getString("productoId")), productos.getString("nombreBase"));
+                Producto producto = new Producto(Integer.parseInt(productos.getString("productoId")), productos.getString("nombreBase").replace(" ", ""));
                 productosMap.put(producto.getNombre(), producto);                
             }
        } catch (Exception ex){
@@ -61,7 +65,7 @@ public class RegistrarVenta extends javax.swing.JFrame {
        ResultSet lotes = access.getLotes();
        try {
             while (lotes.next()){
-                Lote lote = new Lote(Integer.parseInt(lotes.getString("loteId")) , lotes.getString("fecha") , lotes.getString("productoNombre"), Integer.parseInt(lotes.getString("prodContratoId")), Integer.parseInt(lotes.getString("plantaId")), (int) Float.parseFloat(lotes.getString("cantidad")), Float.parseFloat(lotes.getString("costoProduccion")),Float.parseFloat(lotes.getString("precio"))); // Crea el lote
+                Lote lote = new Lote(Integer.parseInt(lotes.getString("loteId")) , lotes.getString("fecha") , lotes.getString("productoNombre").replace(" ", ""), Integer.parseInt(lotes.getString("prodContratoId")), Integer.parseInt(lotes.getString("plantaId")), (int) Float.parseFloat(lotes.getString("cantidad")), Float.parseFloat(lotes.getString("costoProduccion")),Float.parseFloat(lotes.getString("precio"))); // Crea el lote
                 try { // busca a ver si ya existe ese precio para el producto del lote. Si sí, añade la cantidad del lote al precio.
                       productosMap.get(lote.getProductoNombre()).getPrecios().get(lote.getPrecio()).insertCantidadLote(lote, lote.getCantidad());
                 } catch (Exception e) { // Si el precio no existe, lo añade y añade el lote y la cantidad.
@@ -73,6 +77,51 @@ public class RegistrarVenta extends javax.swing.JFrame {
        }
    }
    
+   private void insertTVP(){
+         try {
+               SQLServerDataTable tvp = new SQLServerDataTable();
+               tvp.addColumnMetadata("cantidad", java.sql.Types.INTEGER);
+               tvp.addColumnMetadata("precio", java.sql.Types.DECIMAL );
+               tvp.addColumnMetadata("loteId", java.sql.Types.INTEGER);
+               tvp.addColumnMetadata("canalId",  java.sql.Types.INTEGER);
+               objetosListaMap.forEach((key, value) -> {
+                     int index = 0;
+                     while (index < value.getPrecioObjeto().getCantidadPorLotes().size()) {
+                           Lote loteItem =  value.getPrecioObjeto().getCantidadPorLotes().get(index);
+                           int cantidadItem = value.getCantidad();
+                           if (cantidadItem > loteItem.getCantidad()) {
+                                 try {
+                                       tvp.addRow(loteItem.getCantidad(), value.getPrecioObjeto().getPrecioProd() * loteItem.getCantidad(), loteItem.getId(), canalSelected.getId());
+                                       loteItem.modifyCantidad(-(loteItem.getCantidad()));
+                                       value.modifyCantidad(-(loteItem.getCantidad()));
+                                       
+                                 } catch (SQLServerException ex) {
+                                      JOptionPane.showMessageDialog(this, "ERROR EN LA CREACIÓN DEL TVP", 
+                           "Error", JOptionPane.ERROR_MESSAGE);
+                                      return;
+                                 }
+                                 
+                                 index += 1;
+                           } else {
+                                 try {
+                                       tvp.addRow(cantidadItem, value.getPrecioObjeto().getPrecioProd() * cantidadItem,loteItem.getId(), canalSelected.getId());
+                                       loteItem.modifyCantidad(-(cantidadItem));
+                                       value.modifyCantidad(-(cantidadItem));
+                                 } catch (SQLServerException ex) {
+                                       JOptionPane.showMessageDialog(this, "ERROR EN LA CREACIÓN DEL TVP", 
+                           "Error", JOptionPane.ERROR_MESSAGE);
+                                       return;
+                                 }
+                                 break;
+                           }
+                     }
+               });
+               EsencialVerdeAccess access = EsencialVerdeAccess.getInstance();
+               access.registrarVenta(tvp);
+         } catch (Exception e) {
+         }
+         
+   }
    
     private void fillComboProductos(){
           comboProductos.removeAllItems();
@@ -184,6 +233,7 @@ public class RegistrarVenta extends javax.swing.JFrame {
             jLabel6.setText("Desglose");
             getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 322, -1, -1));
 
+            listaProductos.setMinimumSize(new java.awt.Dimension(200, 200));
             jScrollPane1.setViewportView(listaProductos);
 
             getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(128, 322, -1, -1));
@@ -228,8 +278,6 @@ public class RegistrarVenta extends javax.swing.JFrame {
                   }
             });
             getContentPane().add(comboProductos, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 120, 200, -1));
-
-            cantidadText.setText(" ");
             getContentPane().add(cantidadText, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 240, 200, -1));
 
             registrarButton.setText("Registrar Venta");
@@ -253,13 +301,28 @@ public class RegistrarVenta extends javax.swing.JFrame {
 
       private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
             // TODO add your handling code here:
+            if (listaProductos.getSelectedIndex() == -1){
+                  return;
+            }
+            int input = JOptionPane.showConfirmDialog(null, "¿Desea borrar?", "Selecione una opción...",
+				JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+            // 0=sí, 1=no,
+            if (input == 0){
+                  ObjetoLista deleteObject = objetosListaMap.get((String) listaProductosModel.get(listaProductos.getSelectedIndex()));
+                  listaProductosModel.remove(listaProductos.getSelectedIndex());
+                  montoTotal -= (deleteObject.getCantidad() * deleteObject.getPrecioObjeto().getPrecioProd());
+                  montoLabel.setText(Float.toString(montoTotal));   
+                  deleteObject.getPrecioObjeto().modifyCantidad(deleteObject.getCantidad());
+                  cantidadLoteText.setText(Integer.toString(deleteObject.getPrecioObjeto().getCantidadTotal()));
+            }
+            
       }//GEN-LAST:event_jButton2ActionPerformed
 
       private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
             // TODO add your handling code here:
             cantidad = -1;
         try {
-              cantidad = Integer.valueOf(cantidadLoteText.getText());
+              cantidad = Integer.parseInt(cantidadText.getText());
         }
         catch (Exception e) {
               return;
@@ -267,8 +330,13 @@ public class RegistrarVenta extends javax.swing.JFrame {
         if (canalSelected == null || precioSelected == null || productoSelected == null || cantidad == -1) {
               return;
         }
-        String stringLista = productoSelected.getNombre() + " " + cantidad + " " + (cantidad * precioSelected.getPrecioProd());
-        objetosListaMap.put(stringLista, new ObjetoLista(productoSelected, cantidad, (cantidad * precioSelected.getPrecioProd())));
+        if (cantidad > precioSelected.getCantidadTotal()) {
+              JOptionPane.showMessageDialog(this, "No hay suficiente de esa cantidad.", 
+                           "Error", JOptionPane.ERROR_MESSAGE);
+              return;
+        }
+        String stringLista = productoSelected.getNombre() + " Cantidad: " + cantidad + " Precio: " + (cantidad * precioSelected.getPrecioProd());
+        objetosListaMap.put(stringLista, new ObjetoLista(productoSelected, cantidad, precioSelected));
         listaProductosModel.addElement(stringLista);     
         montoTotal += (cantidad * precioSelected.getPrecioProd());
         montoLabel.setText(Float.toString(montoTotal));   
@@ -278,10 +346,25 @@ public class RegistrarVenta extends javax.swing.JFrame {
 
       private void registrarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registrarButtonActionPerformed
             // TODO add your handling code here:
+            if (listaProductosModel.size() == 0 || canalSelected == null) {
+                  return;
+            }
+            int input = JOptionPane.showConfirmDialog(null, "¿Desea registrar la venta?", "Selecione una opción...",
+				JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+            // 0=sí, 1=no,
+            if (input == 0){
+                  insertTVP();
+                  JOptionPane.showMessageDialog(this, "Se añadió la venta correctamente");
+                  dispose();
+                  RegistrarVenta menu = new RegistrarVenta();
+                  menu.setVisible(true);  
+            }
       }//GEN-LAST:event_registrarButtonActionPerformed
 
       private void cancelarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarButtonActionPerformed
             // TODO add your handling code here:
+            dispose();
+            System.exit(0);
       }//GEN-LAST:event_cancelarButtonActionPerformed
 
       private void comboCanalesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboCanalesActionPerformed

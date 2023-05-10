@@ -60,4 +60,7 @@ public class Lote {
       public float getPrecio() {
             return precio;
       }
+      public void modifyCantidad(int pCantidad) {
+            cantidad += pCantidad; 
+      } 
 }

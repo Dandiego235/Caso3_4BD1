@@ -4,36 +4,37 @@
  */
 package com.ev.esencialverde.data;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+
 
 /**
  *
  * @author dandi
  */
 public class Precio implements Comparable<Precio>{
-      private HashMap<Lote, Integer> cantidadPorLotes;
+      private ArrayList<Lote> cantidadPorLotes;
       private int cantidadTotal;
       private float precioProd;
       private Producto productoPrecio;
       
       public Precio(float pPrecioProd, Producto pProducto, Lote pLote,int pCantidad) {
-            cantidadPorLotes = new HashMap<>();
+            cantidadPorLotes = new ArrayList<>();
             cantidadTotal = 0;
             precioProd = pPrecioProd;
             productoPrecio = pProducto;
             insertCantidadLote(pLote, pCantidad);
       }
 
-      public HashMap<Lote, Integer> getCantidadPorLotes() {
+      public ArrayList<Lote> getCantidadPorLotes() {
             return cantidadPorLotes;
       }
 
-      public void setCantidadPorLotes(HashMap<Lote, Integer> cantidadPorLotes) {
+      public void setCantidadPorLotes(ArrayList<Lote> cantidadPorLotes) {
             this.cantidadPorLotes = cantidadPorLotes;
       }
       
       public void insertCantidadLote(Lote pLote, int pCantidad){
-            cantidadPorLotes.put(pLote, pCantidad);
+            cantidadPorLotes.add(pLote); 
             cantidadTotal += pCantidad;
       }
 
@@ -67,4 +68,6 @@ public class Precio implements Comparable<Precio>{
       public void modifyCantidad(int pCantidad) {
             cantidadTotal += pCantidad; 
       }     
+      
+      
 }

@@ -4,14 +4,13 @@
  */
 package com.ev.esencialverde.data;
 
-import java.util.ArrayList;
+import com.microsoft.sqlserver.jdbc.SQLServerDataTable;
+import com.microsoft.sqlserver.jdbc.SQLServerPreparedStatement;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.sql.SQLException;
 
 /**
  *
@@ -61,11 +60,25 @@ public class EsencialVerdeAccess implements IDataConstants{
            return null;
        }
    }
+   
+   public void registrarVenta(SQLServerDataTable sourceDataTable){
+         try {
+            SQLServerPreparedStatement pStmt =
+            (SQLServerPreparedStatement) conexion.prepareStatement("EXEC dbo.SP_registrarFacturaProductos ?;");  
+            pStmt.setStructured(1, "dbo.productosTabla", sourceDataTable);  
+            pStmt.execute(); 
+            } catch (Exception e) {
+                  e.printStackTrace(System.out);
+                  return;
+            }
+          
+   }
     public ResultSet getProductos(){
        try {
             ResultSet rs = callSP("{call dbo.SP_getProductos}");
-            /*while (rs.next()){
-                System.out.println(rs.getString("productoId") + " " + rs.getString("nombreBase"));
+            /*
+            while (rs.next()){
+                System.out.print(rs.getString("productoId") + " " + rs.getString("nombreBase") + " ");
             }*/
             return rs;
        } catch (Exception ex){

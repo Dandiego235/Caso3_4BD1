@@ -11,10 +11,26 @@ package com.ev.esencialverde.data;
 public class ObjetoLista {
       private Producto productoObjeto;
       private int cantidad;
-      private float precioObjeto;
-      public ObjetoLista (Producto pProducto, int pCantidad, float pPrecio) {
+      private Precio precioObjeto;
+      public ObjetoLista (Producto pProducto, int pCantidad, Precio pPrecio) {
             productoObjeto = pProducto;
             cantidad = pCantidad;
             precioObjeto = pPrecio;
       }
+
+      public Producto getProductoObjeto() {
+            return productoObjeto;
+      }
+
+      public int getCantidad() {
+            return cantidad;
+      }
+
+      public Precio getPrecioObjeto() {
+            return precioObjeto;
+      }
+      
+      public void modifyCantidad(int pCantidad) {
+            cantidad += pCantidad; 
+      } 
 }
