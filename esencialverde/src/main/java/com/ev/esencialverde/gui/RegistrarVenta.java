@@ -91,6 +91,9 @@ public class RegistrarVenta extends javax.swing.JFrame {
                            int cantidadItem = value.getCantidad();
                            if (cantidadItem > loteItem.getCantidad()) {
                                  try {
+                                       if (loteItem.getCantidad() == 0){
+                                             continue;
+                                       } 
                                        tvp.addRow(loteItem.getCantidad(), value.getPrecioObjeto().getPrecioProd() * loteItem.getCantidad(), loteItem.getId(), canalSelected.getId());
                                        loteItem.modifyCantidad(-(loteItem.getCantidad()));
                                        value.modifyCantidad(-(loteItem.getCantidad()));
@@ -309,6 +312,7 @@ public class RegistrarVenta extends javax.swing.JFrame {
             // 0=sí, 1=no,
             if (input == 0){
                   ObjetoLista deleteObject = objetosListaMap.get((String) listaProductosModel.get(listaProductos.getSelectedIndex()));
+                  objetosListaMap.remove((String) listaProductosModel.get(listaProductos.getSelectedIndex()));
                   listaProductosModel.remove(listaProductos.getSelectedIndex());
                   montoTotal -= (deleteObject.getCantidad() * deleteObject.getPrecioObjeto().getPrecioProd());
                   montoLabel.setText(Float.toString(montoTotal));   

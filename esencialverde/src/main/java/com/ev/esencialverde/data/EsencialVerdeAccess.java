@@ -42,9 +42,10 @@ public class EsencialVerdeAccess implements IDataConstants{
             Statement stmt = conexion.createStatement();
             // String SQL = "SELECT localId, nombre FROM dbo.locales";
             ResultSet rs = stmt.executeQuery(SQL);
+            /*
             while (rs.next()){
                 System.out.println(rs.getString("localId") + " " + rs.getString("nombre"));
-            }
+            }*/
        } catch (Exception ex){
            ex.printStackTrace();
        }
