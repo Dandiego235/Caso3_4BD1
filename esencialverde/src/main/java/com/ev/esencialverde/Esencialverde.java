@@ -13,9 +13,7 @@ import com.ev.esencialverde.gui.RegistrarVenta;
  */
 public class Esencialverde {
     public static void main(String[] args) {
-          EsencialVerdeAccess access = EsencialVerdeAccess.getInstance();
-          access.getProductos();
-          access.getCanales();
+          
         RegistrarVenta menu = new RegistrarVenta();
           menu.setVisible(true);  
     }
