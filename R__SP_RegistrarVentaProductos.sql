@@ -9,19 +9,6 @@ GO
 DROP TYPE IF EXISTS productosTabla;
 GO
 
-SELECT * FROM facturas;
-select * from itemsProductos where itemProdId > 10000;
-select * from preciosProductosContrato where precioProductoId >6975;
-select * from lotesProduccionLogs lpl 
-INNER JOIN preciosProductosContrato pPC On pPC.prodContratoId = lpl.prodContratoId AND pPC.productoId = lpl.productoId
-WHERE lpl.loteId = 241;
-delete itemsProductos
-where itemProdId > 10000;
-delete itemsFactura 
-where facturaId = 1001;
-delete facturas
-where facturaId = 1001
-
 CREATE TYPE productosTabla
 	AS TABLE
 		(cantidad INT, precio MONEY, loteId INT, canalId INT);
