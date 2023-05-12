@@ -21,16 +21,13 @@ const sqlConfig = {
 export class data_esencial {
     private static instance: data_esencial;
     private log: Logger;
-    private pool;
 
     private constructor()
     {
         this.log = new Logger();
         try
         {  
-            sql.connect(sqlConfig).then((pool:any) => {
-                this.pool = pool;
-            })
+            sql.connect(sqlConfig);
         } catch (e)
         {
             this.log.error(e);
