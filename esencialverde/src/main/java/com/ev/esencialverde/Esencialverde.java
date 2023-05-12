@@ -4,7 +4,6 @@
 
 package com.ev.esencialverde;
 
-import com.ev.esencialverde.data.EsencialVerdeAccess;
 import com.ev.esencialverde.gui.RegistrarVenta;
 
 /**

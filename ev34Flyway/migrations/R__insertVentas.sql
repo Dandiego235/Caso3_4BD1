@@ -1,12 +1,22 @@
 -----------------------------------------------------------
--- Autor: Daniel Granados
--- Fecha: 08/05/2023
--- Descripcion: Este Stored procedure obtiene los canales
+-- Autor: Diego Granados
+-- Fecha: 4/23/2023
+-- Descripción: Este Stored procedure inserta una factura con base en los productos vendidos que se mandan por TVP.
 -----------------------------------------------------------
 
-CREATE PROCEDURE [dbo].[XXXXXXSP_VerboEntidad]
-	@Param1 NVARCHAR(35),
-	@Param2 BIGINT
+DROP PROCEDURE IF EXISTS  [dbo].[SP_registrarFacturaProductos];
+GO
+DROP TYPE IF EXISTS productosTabla;
+GO
+
+CREATE TYPE productosTabla
+	AS TABLE
+		(cantidad INT, precio MONEY, loteId INT, canalId INT);
+GO
+
+-- Este stored procedure recibe los viajes de recolección que se van a pagar en un table valued parameter.
+CREATE PROCEDURE [dbo].[SP_registrarFacturaProductos]
+	@productosVenta [dbo].productosTabla READONLY
 AS 
 BEGIN
 	
@@ -18,8 +28,8 @@ BEGIN
 
 	-- declaracion de otras variables
 
+	DECLARE @facturaId BIGINT
 	-- operaciones de select que no tengan que ser bloqueadas
-	-- tratar de hacer todo lo posible antes de q inice la transaccion
 	
 	SET @InicieTransaccion = 0
 	IF @@TRANCOUNT=0 BEGIN
@@ -30,8 +40,24 @@ BEGIN
 	
 	BEGIN TRY
 		SET @CustomError = 2001
+		
+		INSERT INTO [dbo].[itemsProductos] ([canalId], [loteId], [cantidadProductos], [montoTotal], [monedaId], [fecha], [precioProductoId], [enabled], [createdAt], [computer], [username], [checksum])
+		SELECT pv.canalId, pv.loteId, pv.cantidad, pv.precio, 1, GETDATE(), pPC.precioProductoId, 1,  GETDATE(), 'Computer1', 'User1', 0x0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF
+		FROM @productosVenta pv
+		INNER JOIN lotesProduccionLogs lpl ON lpl.loteId = pv.loteId
+		INNER JOIN preciosProductosContrato pPC On pPC.prodContratoId = lpl.prodContratoId AND pPC.productoId = lpl.productoId;
 
-		-- put your code here
+		INSERT INTO [dbo].[facturas] (enabled, [createdAt], computer, username, checksum, facturaStatusId, [descripcion], [fecha], fechaMax)
+VALUES (1, GETDATE(), 'PC01', 'JohnDoe', 0x0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF, 1, 'Factura de recoleccion ', GETDATE(), NULL);
+
+		SET @facturaId = SCOPE_IDENTITY();
+
+		INSERT INTO [dbo].[itemsFactura] (facturaId, itemId, tipoItemId, enabled, [createdAt], updatedAt, computer, username, checksum)
+		SELECT @facturaId, itemsProductos.itemProdId, 3, 1, GETDATE(), NULL, 'PC01', 'JohnDoe', 0x0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF
+		FROM itemsProductos
+		INNER JOIN @productosVenta pv ON pv.canalId = itemsProductos.canalId AND pv.loteId = itemsProductos.loteId AND pv.cantidad = itemsProductos.[cantidadProductos] AND pv.precio = itemsProductos.montoTotal
+		INNER JOIN facturas ON facturas.facturaId = @facturaId and itemsProductos.fecha = facturas.fecha
+		
 		
 		IF @InicieTransaccion=1 BEGIN
 			COMMIT

@@ -104,7 +104,7 @@ public class EsencialVerdeAccess implements IDataConstants{
     public ResultSet getLotes(){
        try {
             ResultSet rs = callSP("{call dbo.SP_getLotes}");
-            /*while (rs.next()){
+            /* while (rs.next()){
                 System.out.println(rs.getString("loteId") + " " + rs.getString("fecha") + " " + rs.getString("productoNombre")
                         + " " + rs.getString("prodContratoId") + " " + rs.getString("plantaId") + " " + rs.getString("cantidad")
                  + " " + rs.getString("costoProduccion") + " " + rs.getString("precio"));
