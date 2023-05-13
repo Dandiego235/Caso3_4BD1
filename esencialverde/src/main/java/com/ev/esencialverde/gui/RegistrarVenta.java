@@ -92,6 +92,7 @@ public class RegistrarVenta extends javax.swing.JFrame {
                            if (cantidadItem > loteItem.getCantidad()) {
                                  try {
                                        if (loteItem.getCantidad() == 0){
+                                             index += 1;
                                              continue;
                                        } 
                                        tvp.addRow(loteItem.getCantidad(), value.getPrecioObjeto().getPrecioProd() * loteItem.getCantidad(), loteItem.getId(), canalSelected.getId());
