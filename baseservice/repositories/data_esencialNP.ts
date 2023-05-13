@@ -1,39 +1,23 @@
+import { getEnabledCategories } from 'trace_events';
 import { Logger } from '../common'
-
-const sqlNP = require('mssql')
-
-const sqlNPConfig = {
-    user: "sa",
-    password: "Twinsociety235",
-    database: "ev34",
-    server: "localhost",
-    pool: {
-      max: 1,
-      min: 1,
-      idleTimeoutMillis: 30000
-    },
-    options: {
-      encrypt: true, 
-      trustServerCertificate: true 
-    }
-}
 
 export class data_esencialNP {
     private static instance: data_esencialNP;
     private log: Logger;
-    private pool;
 
-    public constructor()
+    private constructor()
     {
         this.log = new Logger();
-        try
-        {  
-            this.pool = new sqlNP.ConnectionPool(sqlNPConfig);
-        } catch (e)
-        {
-            this.log.error(e);
-        }
+        this.log.info("creando objeto");
         // via singleton, accediendo a un solo pool tengo una conexiona la base de datos
+    }
+
+    private sleep(milliseconds) {
+        const date = Date.now();
+        let currentDate = null;
+        do {
+          currentDate = Date.now();
+        } while (currentDate - date < milliseconds);
     }
 
     public static getInstance() : data_esencialNP
@@ -45,17 +29,66 @@ export class data_esencialNP {
         return this.instance;
     }
 
-    public async getLotes() : Promise<any>
-    {
-        this.pool = await this.pool.connect();
-        var res:any = await this.pool.request().execute('SP_getLotes');
-        //await setTimeout(() => {this.pool.close();}, 25000);
-        this.pool.close();
-        return res;
-    }
+    public async getLotes() : Promise<any>{
 
-    public getPool():any {
-        return this.pool;
-    }
+        const sqlNP = require('tedious')
+        
+        const sqlNPConfig = {
+            server: 'localhost',
+            authentication: {
+                type: 'default',
+                options: {
+                    userName: 'sa',
+                    password: 'Twinsociety235'
+                }
+            },
+            options: {
+                database: 'ev34',
+                port: 1433,
+                encrypt: true,
+                trustServerCertificate: true,
+                rowCollectionOnDone: true,
+                rowCollectionOnRequestCompletion: true,
+                useColumnNames: true
+            }
+        }
 
+        return new Promise<any> ((resolve, reject) => {
+            const connection = new sqlNP.Connection(sqlNPConfig);
+
+            connection.on("connect", (err:any) => {
+                if (err) {
+                    console.error(err.message);
+                } else {
+                    const result = [];
+                    const request = new sqlNP.Request('SP_getLotes', (err:any, rowCount: number, rows:any) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            const dictionary = {};
+                            dictionary["recordsets"] = result;
+                            resolve({rows});
+                            console.log('DONE');
+                            console.log({rows});
+                            //this.sleep(20000);
+                            connection.close();
+                        }
+                    });
+                    
+                    /*
+                    request.on("row", (columns:any) => {
+                        const entry = {};
+                        columns.forEach((column:any) => {
+                          entry[column.metadata.colName] = column.value;
+                        });
+                        result.push(entry);
+                    });*/
+                    connection.callProcedure(request);
+                };
+            });
+
+            connection.connect();
+        });
+    }
 }
+
