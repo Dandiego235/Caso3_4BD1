@@ -12,7 +12,7 @@ export class data_esencialNP {
         // via singleton, accediendo a un solo pool tengo una conexiona la base de datos
     }
 
-    private sleep(milliseconds) {
+    private sleep(milliseconds:any) {
         const date = Date.now();
         let currentDate = null;
         do {
@@ -29,7 +29,7 @@ export class data_esencialNP {
         return this.instance;
     }
 
-    public async getLotes() : Promise<any>{
+    public getLotes() : Promise<any>{
 
         const sqlNP = require('tedious')
         
@@ -60,16 +60,13 @@ export class data_esencialNP {
                 if (err) {
                     console.error(err.message);
                 } else {
-                    const result = [];
                     const request = new sqlNP.Request('SP_getLotes', (err:any, rowCount: number, rows:any) => {
                         if (err) {
                             reject(err);
                         } else {
-                            const dictionary = {};
-                            dictionary["recordsets"] = result;
                             resolve({rows});
                             console.log('DONE');
-                            console.log({rows});
+                            //console.log({rows});
                             //this.sleep(20000);
                             connection.close();
                         }
