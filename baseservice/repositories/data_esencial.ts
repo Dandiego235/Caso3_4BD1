@@ -8,8 +8,8 @@ const sqlConfig = {
     database: "ev34",
     server: "localhost",
     pool: {
-      max: 20,
-      min: 10,
+      max: 5,
+      min: 1,
       idleTimeoutMillis: 30000
     },
     options: {

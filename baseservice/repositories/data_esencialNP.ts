@@ -65,7 +65,7 @@ export class data_esencialNP {
                             reject(err);
                         } else {
                             resolve({rows});
-                            console.log('DONE');
+                            //console.log('DONE');
                             //console.log({rows});
                             //this.sleep(20000);
                             connection.close();
