@@ -66,20 +66,12 @@ export class data_esencialNP {
                         } else {
                             resolve({rows});
                             //console.log('DONE');
-                            //console.log({rows});
+
                             //this.sleep(20000);
                             connection.close();
                         }
                     });
                     
-                    /*
-                    request.on("row", (columns:any) => {
-                        const entry = {};
-                        columns.forEach((column:any) => {
-                          entry[column.metadata.colName] = column.value;
-                        });
-                        result.push(entry);
-                    });*/
                     connection.callProcedure(request);
                 };
             });
