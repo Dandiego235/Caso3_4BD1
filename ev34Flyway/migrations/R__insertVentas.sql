@@ -29,6 +29,7 @@ BEGIN
 	-- declaracion de otras variables
 
 	DECLARE @facturaId BIGINT
+	DECLARE @fecha DATETIME
 	-- operaciones de select que no tengan que ser bloqueadas
 	
 	SET @InicieTransaccion = 0
@@ -41,19 +42,20 @@ BEGIN
 	BEGIN TRY
 		SET @CustomError = 2001
 		
+		SET @fecha = GETDATE();
 		INSERT INTO [dbo].[itemsProductos] ([canalId], [loteId], [cantidadProductos], [montoTotal], [monedaId], [fecha], [precioProductoId], [enabled], [createdAt], [computer], [username], [checksum])
-		SELECT pv.canalId, pv.loteId, pv.cantidad, pv.precio, 1, GETDATE(), pPC.precioProductoId, 1,  GETDATE(), 'Computer1', 'User1', 0x0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF
+		SELECT pv.canalId, pv.loteId, pv.cantidad, pv.precio, 1, @fecha, pPC.precioProductoId, 1,  @fecha, 'Computer1', 'User1', 0x0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF
 		FROM @productosVenta pv
 		INNER JOIN lotesProduccionLogs lpl ON lpl.loteId = pv.loteId
 		INNER JOIN preciosProductosContrato pPC On pPC.prodContratoId = lpl.prodContratoId AND pPC.productoId = lpl.productoId;
 
 		INSERT INTO [dbo].[facturas] (enabled, [createdAt], computer, username, checksum, facturaStatusId, [descripcion], [fecha], fechaMax)
-VALUES (1, GETDATE(), 'PC01', 'JohnDoe', 0x0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF, 1, 'Factura de recoleccion ', GETDATE(), NULL);
+VALUES (1, @fecha, 'PC01', 'JohnDoe', 0x0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF, 1, 'Factura de recoleccion ', @fecha, NULL);
 
 		SET @facturaId = SCOPE_IDENTITY();
 
 		INSERT INTO [dbo].[itemsFactura] (facturaId, itemId, tipoItemId, enabled, [createdAt], updatedAt, computer, username, checksum)
-		SELECT @facturaId, itemsProductos.itemProdId, 3, 1, GETDATE(), NULL, 'PC01', 'JohnDoe', 0x0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF
+		SELECT @facturaId, itemsProductos.itemProdId, 3, 1, @fecha, NULL, 'PC01', 'JohnDoe', 0x0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF
 		FROM itemsProductos
 		INNER JOIN @productosVenta pv ON pv.canalId = itemsProductos.canalId AND pv.loteId = itemsProductos.loteId AND pv.cantidad = itemsProductos.[cantidadProductos] AND pv.precio = itemsProductos.montoTotal
 		INNER JOIN facturas ON facturas.facturaId = @facturaId and itemsProductos.fecha = facturas.fecha
