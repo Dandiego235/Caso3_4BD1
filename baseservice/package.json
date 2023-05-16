@@ -17,6 +17,7 @@
   "dependencies": {
     "express": "4.17.1",
     "mssql": "^9.1.1",
+    "sequelize": "^6.31.1",
     "tedious": "^16.0.0"
   },
   "devDependencies": {

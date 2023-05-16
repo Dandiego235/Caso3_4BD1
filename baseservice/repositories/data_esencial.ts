@@ -47,12 +47,9 @@ export class data_esencial {
 
     public getLotes() : Promise<any>
     {
-        // return this.pool.request().execute("SP_getLotes")
-    
         return sql.connect(sqlConfig).then((pool:any) => {
             return pool.request()
                 .execute("SP_getLotes")
         })
     }
-
 }
